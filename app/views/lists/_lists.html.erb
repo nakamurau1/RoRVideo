@@ -1,0 +1,6 @@
+<% if @lists.any? %>
+	<div class="video_lists">
+		<%= render @lists %>
+    </div>
+    <%= will_paginate @lists %>
+<% end %>

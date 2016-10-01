@@ -1,0 +1,8 @@
+<% provide(:title, @user.name) %>
+<h2>
+  <%= @user.name %>
+</h2>
+<h4><%= "#{@user.name}さんのマイリスト一覧" %></h4>
+<div id="show-lists">
+  <%= render 'lists/lists' %>
+</div>

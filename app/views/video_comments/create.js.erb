@@ -1,0 +1,2 @@
+$("#comment-list").html("<%= escape_javascript(render partial: 'comment_item', collection: @comment_items) %>")
+$("#comment-form").html("<%= escape_javascript(render 'video_comments/comment_form') %>")

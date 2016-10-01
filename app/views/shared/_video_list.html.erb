@@ -1,0 +1,6 @@
+<% if @videos.any? %>
+  <ol class="microposts">
+    <%= render partial: 'shared/video_item', collection: @videos %>
+  </ol>
+  <%= will_paginate @videos %>
+<% end %>

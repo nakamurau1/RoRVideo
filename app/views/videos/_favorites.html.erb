@@ -1,0 +1,21 @@
+<% if signed_in? %>
+<!-- サインインしていれば -->
+  <div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+      お気に入りリストに追加
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <%= render partial: 'videos/favorites_item', collection: @favorites_items %>
+    </ul>
+    <input type="hidden" name="dropdown-value" value="">
+  </div>
+
+  <script>
+  $(function() {
+    $("input[type=checkbox]").click(function() {
+      $.post('/lists/'+ $(this).data('list_id') + '/videos/' + $(this).data('video_id') + '/toggle');
+     });
+  });
+  </script>
+<% end %>

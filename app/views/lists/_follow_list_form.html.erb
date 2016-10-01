@@ -1,0 +1,10 @@
+<% if signed_in? && !current_user?(list.user) %>
+  <!-- サインインしていてリストの作成者がカレントユーザでない場合 -->
+  <div id="follow_list_form">
+	  <% if current_user.following_list?(list) %>
+	    <%= render 'lists/unfollow_list', list: list %>
+	  <% else %>
+	    <%= render 'lists/follow_list', list: list %>
+	  <% end %>
+  </div>
+<% end %>

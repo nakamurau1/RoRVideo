@@ -1,0 +1,5 @@
+# Usersコントローラーのヘルパー
+module UsersHelper
+
+
+end

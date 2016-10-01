@@ -1,0 +1,10 @@
+<% provide(:title, 'マイリスト一覧') %>
+<h2>マイリスト一覧</h2>
+
+<%= will_paginate @all_lists %>
+
+<div class="video_lists">
+	<%= render @all_lists %>
+</div>
+
+<%= will_paginate @all_lists %>

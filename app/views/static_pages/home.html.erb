@@ -1,0 +1,7 @@
+<% provide(:description, 'rovideoはエロ動画の無料キュレーションサービスです。') %>
+<% if signed_in? %>
+  <%= render 'shared/videos_in_following_lists' %>
+<% else %>
+  <%= render 'shared/top_page_title' %>
+  <%= render 'shared/videos' %>
+<% end %>

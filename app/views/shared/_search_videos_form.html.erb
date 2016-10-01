@@ -1,0 +1,9 @@
+<%= search_form_for @search do |f| %>
+
+	<!-- contはlike検索の意。startとすると前方一致。 -->
+	<%= f.label :title_cont, "タイトルで検索" %>
+	<%= f.search_field :title_cont %>
+    
+    <%= f.submit '検索' %>
+
+<% end %>

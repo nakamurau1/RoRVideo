@@ -1,0 +1,5 @@
+<!-- listsのビデオ一覧 -->
+<% if @videos %>
+  <%= render partial: 'lists/video_item', collection: @videos %>
+  <%= will_paginate @videos %>
+<% end %>

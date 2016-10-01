@@ -1,0 +1,28 @@
+<% provide(:title, '新着動画') %>
+<h3 class="heading heading-border-bttom">
+	新着動画
+</h3>
+<%= render 'shared/search_videos_form' %>
+<% if @all_videos.any? %>
+  <%= will_paginate @all_videos %>
+
+  <div class="videos">
+  		<div class="container">
+  			<% @all_videos.each_slice(3) do |a, b, c| %>
+	  			<div class="row">
+	  				<div class="col-md-4 col-xs-12">
+	  					<%= render partial: 'shared/video_item', locals: {video_item: a} %>
+	  				</div>
+	  				<div class="col-md-4 col-xs-12">
+	  					<%= render partial: 'shared/video_item', locals: {video_item: b} %>
+	  				</div>
+	  				<div class="col-md-4 col-xs-12">
+	  					<%= render partial: 'shared/video_item', locals: {video_item: c} %>
+	  				</div>
+  				</div>
+  			<% end %>
+		</div>
+  </div>
+  
+  <%= will_paginate @all_videos %>
+<% end %>

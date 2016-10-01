@@ -1,0 +1,7 @@
+<h3>フォロー中リストの動画</h3>
+<% if @videos_in_following_lists.any? %>
+	<div class="videos">
+	  <%= render partial: 'shared/video_item', collection: @videos_in_following_lists %>
+	</div>
+    <%= will_paginate @videos_in_following_lists %>
+<% end %>

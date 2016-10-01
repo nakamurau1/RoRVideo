@@ -1,0 +1,9 @@
+<% if signed_in? && current_user?(@list.user) %>
+	<%= form_for(@list.list_items.find_by(video_id: video_item.id),
+	             html: { method: :delete }, remote: true) do |f| %>
+	<div><%= f.hidden_field :video_id %></div>
+	<div><%= f.hidden_field :list_id, :value => @list.id %>
+	<%= f.submit "お気に入りから削除", class: "btn btn-large" %>
+	<% end %>
+<% end %>
+

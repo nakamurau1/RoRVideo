@@ -1,0 +1,19 @@
+<%= form_for(@list) do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
+  <%= f.label "タイトル" %>
+  <%= f.text_field :name, placeholder: "リストを新規追加します..." %>
+
+  <%= f.label "コメント（省略可）" %>
+  <%= f.text_area :comment, placeholder: "マイリストの説明文を入力してください..." %>
+
+  <div class="checkbox">
+  	<label>
+  		<%= f.check_box :private %>非公開
+  	</label>
+  </div>
+
+  <% btn_name = "新規作成" %>
+  <% btn_name = "更新" if is_edit %>
+
+  <%= f.submit btn_name, class: "btn btn-large btn-primary btn-update-mylist" %>
+<% end %>

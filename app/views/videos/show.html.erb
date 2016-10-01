@@ -1,0 +1,17 @@
+<% provide(:title, "#{@video.title}") %>
+<% provide(:description, "#{@video.title} rovideo") %>
+<h3><%= @video.title %></h3>
+<div class="video-wrap">
+  <%= @video.get_embeded_html %>
+</div>
+<div class="video-view-counter">
+	<%= "再生 : #{number_with_delimiter(@video.view_count)}" %>
+</div>
+<%= render 'favorites' %>
+<h3>コメント</h3>
+<section>
+  <div id="comment-form">
+    <%= render 'video_comments/comment_form' %>
+  </div>
+</section>
+<%= render 'video_comments/comment' %>

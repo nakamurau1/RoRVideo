@@ -1,0 +1,11 @@
+<% if signed_in? %>
+<!-- remote: trueを追加してAjax対応 -->
+	<%= form_for(current_user.video_comments.build(video_id: @video.id), remote: true) do |f| %>
+	  <div><%= f.hidden_field :video_id %></div>
+	  <%= render 'shared/error_messages', object: f.object %>
+	  <div class="field">
+	    <%= f.text_area :comment, placeholder: "ここにコメントを入力してください..." %>
+	  </div>
+	  <%= f.submit "投稿", class: "btn btn-large btn-primary" %>
+	<% end %>
+<% end %>

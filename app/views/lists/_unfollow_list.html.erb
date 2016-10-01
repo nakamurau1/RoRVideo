@@ -1,0 +1,6 @@
+<% if current_user.following_list?(list) %>
+	<%= form_for(current_user.followed_lists.find_by(list_id: list.id),
+	             html: { method: :delete }, remote: true) do |f| %>
+	  <%= f.submit "フォロー解除", class: "btn-large" %>
+	<% end %>
+<% end %>

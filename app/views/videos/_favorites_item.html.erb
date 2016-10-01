@@ -1,0 +1,7 @@
+<li id="<%= favorites_item.id %>">
+<div class="checkbox">
+  	<label>
+		<%= check_box_tag '', '', favorites_item.favorite?(@video), {'data-list_id' => favorites_item.id, 'data-video_id' => @video.id} %><%= favorites_item.name %>
+	</label>
+  </div>
+</li>

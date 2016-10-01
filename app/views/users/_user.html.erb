@@ -1,0 +1,10 @@
+<% if !user.admin? %>
+	<!-- adminユーザは一覧に表示しない -->
+	<div class="user_item">
+		<%= link_to user.name, user %>
+		<% if signed_in? && current_user.admin? && !current_user?(user) %>
+		  | <%= link_to "delete", user, method: :delete,
+		                                data: { confirm: "You sure?" } %>
+		<% end %>
+	</div>
+<% end %>

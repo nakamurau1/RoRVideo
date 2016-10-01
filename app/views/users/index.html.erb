@@ -1,0 +1,11 @@
+<% provide(:title, 'ユーザ一覧') %>
+<h2>ユーザ一覧</h2>
+
+<%= will_paginate %>
+
+<div class="users">
+	<!-- Railsが自動的にuserのコレクションを列挙 -->
+  	<%= render @users %>
+</div>
+
+<%= will_paginate %>

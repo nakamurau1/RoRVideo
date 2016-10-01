@@ -1,0 +1,4 @@
+<div class="comments" id="comment-list">
+<%= render partial: 'video_comments/comment_item', collection: @comment_items %>
+</div>
+<%= will_paginate @comment_items %>

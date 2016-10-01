@@ -1,0 +1,22 @@
+<% provide(:title, 'ユーザ登録') %>
+<h2>ユーザ登録</h2>
+
+<div class="sign_in_form">
+  <%= form_for(@user) do |f| %>
+    <%= render 'shared/error_messages', object: f.object %>
+
+    <%= f.label :uniq_user_name, 'ユーザID' %>
+    <%= f.text_field :uniq_user_name %>
+
+    <%= f.label :name, 'ユーザ名' %>
+    <%= f.text_field :name %>
+
+    <%= f.label :password, 'パスワード' %>
+    <%= f.password_field :password %>
+
+    <%= f.label :password_confirmation, 'パスワード（確認）' %>
+    <%= f.password_field :password_confirmation %>
+
+    <%= f.submit "サインアップ", class: "btn btn-large btn-primary" %>
+  <% end %>
+</div>

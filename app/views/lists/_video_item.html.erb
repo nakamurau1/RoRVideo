@@ -1,0 +1,10 @@
+<div class="video_item">
+  <span class="title"><%= video_item.title %></span>
+  <span class="content">
+  	<a href="<%= video_path(video_item) %>"><img alt="" border="0" width = "560" height = "315" src="<%= video_item.thumbnail_url %>" class="img-responsive" /></a>
+  </span>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(video_item.created_at) %> ago.
+  </span>
+  <%= render 'lists/delete_button', video_item: video_item %>
+</div>
