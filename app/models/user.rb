@@ -3,12 +3,12 @@ class User < ActiveRecord::Base
     has_many :video_comments, dependent: :destroy
     has_many :followed_lists, dependent: :destroy
     has_many :following_lists, through: :followed_lists, source: :list
-	before_create :create_remember_token
-	validates :name, presence: true, length: {maximum: 50}
+	  before_create :create_remember_token
+	  validates :name, presence: true, length: {maximum: 50}
     has_secure_password
     validates :password, length: { minimum: 6 }
     validates :uniq_user_name,
-      presence: true, uniqueness: {case_sensitive: false}, 
+      presence: true, uniqueness: {case_sensitive: false},
       length: { minimum: 3, maximum: 25}
       # format: { with: /^[A-Za-z][\w-]*$/ }
       # → なんかわからんけどエラー出るのでコメントアウト
