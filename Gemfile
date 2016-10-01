@@ -18,7 +18,7 @@ gem 'bootstrap-will_paginate', '0.0.10'
 
 group :development, :test do
   gem 'sqlite3', '1.3.9'
-  gem 'rspec-rails', '2.99'
+  gem 'rspec-rails', '~> 3.4.0'
 
   # デバッグ環境のインストール
   gem 'pry-rails'  # rails console(もしくは、rails c)でirbの代わりにpryを使われる

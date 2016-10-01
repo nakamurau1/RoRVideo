@@ -29,7 +29,7 @@ class TempVideo
 		puts "video_type : #{get_video_type}"
 		puts "thumbnail_url : #{thumbnail_url}"
 		puts "title : #{title}"
-		puts "---------------------------------------"		
+		puts "---------------------------------------"
 	end
 
 	def get_v_id
@@ -67,7 +67,7 @@ class TempVideo
 			return "xvideos"
 
 		elsif self.video_url.index("redtube")
-				
+
 			return "redtube"
 
 		elsif self.video_url.index("pornhost")
