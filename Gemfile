@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
-ruby '2.0.0'
+ruby '2.3.0'
 #ruby-gemset=railstutorial_rails_4_0
 
 # gem 'rails', '4.0.5'
-gem 'rails', '4.1.7'
+gem 'rails', '4.2.2'
 gem 'autoprefixer-rails'
 # → bootswatch-railsに必要
 #   詳細は、http://rubyandrails.hatenablog.com/entry/bootswatch-rails
@@ -17,7 +17,7 @@ gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.10'
 
 group :development, :test do
-  gem 'sqlite3', '1.3.8'
+  gem 'sqlite3', '1.3.9'
   gem 'rspec-rails', '2.13.1'
 
   # デバッグ環境のインストール
@@ -99,4 +99,3 @@ end
 
 # # Use debugger
 # # gem 'debugger', group: [:development, :test]
-
