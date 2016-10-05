@@ -1,19 +1,21 @@
 require 'open-uri'
 require 'kconv'
+require 'pry'
 
 namespace :db do
 	desc "Crawl videos"
 
 	task crawl: :environment do
 
+		puts "収集開始=========================================="
+
 		# ぬきストからは収集しない。
 		# → javynowの再生速度が遅いため
-		crawl_nukistream
+		# crawl_nukistream
 
-		crawl_babyshark
+		crawl_youtube
 
-		# 開発中
-		# crawl_agesage
+		puts "収集完了=========================================="
 
 	end
 end
@@ -137,6 +139,7 @@ class TempVideoList
 	# DBにデータを出力します
 	def write_to_db
 		@videos.each do |v|
+
 			# 既に追加済みの場合は次のLoopへ
 			next if Video.exists?(v_id: v.get_v_id, video_type: v.get_video_type)
 			# video_urlが設定されていない場合は保存しない
@@ -154,232 +157,101 @@ class TempVideoList
 
 end
 
-# babyshark
-def crawl_babyshark
-
-	video_list = TempVideoList.new
-
-	root_url = "http://babyshark.info/"
-
-	video_page_urls = []
-
-	10.times do |num|
-
-		start_url = "#{root_url}/videos?page=#{num+1}"
-
-		doc = Nokogiri::HTML(open(start_url))
-
-		nodes = doc.xpath("//*[@class='media']")
-
-		nodes.each do |node|
-
-			page_url = node.xpath(".//a")[0].attribute('href')
-			thumbnail_url = node.xpath(".//img")[0].attribute('data-original')
-			bottom_left_text = node.xpath(".//*[@class='thumbnail-content bottom-left']")
-
-			play_time_text = bottom_left_text.xpath(".//span")[0].content if !bottom_left_text.blank?
-
-			if page_url.text.index("videos") == nil then
-				# 外部サイトへのリンクは飛ばす
-
-				next
-			end
-
-			full_path = "#{root_url}#{page_url}"
-			full_thumbnail_path = "#{root_url}#{thumbnail_url.text}"
-
-			video_page_urls.push(full_path)
-
-			# オブジェクトを作成
-			new_video = TempVideo.new()
-			new_video.page_url = full_path
-			new_video.thumbnail_url = full_thumbnail_path
-			new_video.play_time = parse_play_time_text(play_time_text)
-
-			video_list.add_video(new_video)
-		end
-	end
-
-	Anemone.crawl(video_page_urls, :depth_limit => 0) do |anemone|
-
-		anemone.on_every_page do |page|
-
-			doc = Nokogiri::HTML.parse(page.body.toutf8)
-
-			mainVideo = doc.xpath("//main")
-			video_container = mainVideo.xpath(".//*[@class='video-container']")
-
-			title = mainVideo.xpath(".//h1")[0].content
-			iframe_tag = video_container.xpath(".//iframe")[0]
-
-			# iframe（＝Xvideos）のみ収集する
-			next if iframe_tag.blank?
-
-			video_url = iframe_tag.attribute('src')
-
-			# コレクションからオブジェクトを抽出
-			got_video = video_list.get_video_by_page_url(page.url.to_s)
-			# プロパティを設定
-			got_video.title = title
-			got_video.video_url = video_url.text
-		end
-	end
-
-	video_list.write_to_db
-end
-
-# ぬきストリーム
-def crawl_nukistream
+def crawl_youtube
 
 	# Videoオブジェクトを格納する
 	video_list = TempVideoList.new()
 
-	root_url = "http://www.nukistream.com/"
+	root_url = "https://www.youtube.com/"
+
+	start_url = "https://www.youtube.com/results?q=ruby+on+rails&sp=CAI%253D"
 
 	video_page_urls = []
 
-	# 5ページ分の起点URLを作る
-	10.times do |num|
+	doc = Nokogiri::HTML(open(start_url))
 
-		start_url = "#{root_url}?p=#{num+1}"
+	ol_node = doc.xpath("//ol[@class='item-section']")
+	li_nodes = ol_node.xpath("li")
 
-		doc = Nokogiri::HTML(open(start_url))
+	li_nodes.each do |node|
 
-		nodes = doc.xpath("//*[@class='cntBox']")
+		# 広告か否か
+		is_ad = node.xpath(".//span[@class='yt-badge ad-badge-byline yt-badge-ad']").to_s
+		# 広告は飛ばす
+		next if !is_ad.empty?
 
-		nodes.each do |node|
-			page_url = node.xpath(".//a")[0].attribute('href')
-			thumbnail_url = node.xpath(".//img")[0].attribute('src')
+		title_node = node.xpath(".//h3[@class='yt-lockup-title ']")
+		title = title_node.xpath("a").text
 
-			if page_url.text.index("video") != 0 then
-				# 外部サイトへのリンクは飛ばす
-				next
-			end
+		thumbnail_node = node.xpath(".//span[@class='yt-thumb-simple']")
+		img_tag = thumbnail_node.xpath(".//img")
 
-			full_path = root_url + page_url.text
-
-			video_page_urls.push(full_path)
-
-			# オブジェクトを作成
-			new_video = TempVideo.new()
-			new_video.page_url = full_path
-			new_video.thumbnail_url = thumbnail_url.text
-
-			video_list.add_video(new_video)
+		thumbnail_url = img_tag.attribute('src')
+		if !thumbnail_url.to_s.index(".jpg")
+			thumbnail_url = img_tag.attribute('data-thumb')
 		end
+
+		# URLの余計な部分を取り除く
+		md = thumbnail_url.to_s.match(/(https.+\.jpg)/)
+
+		if md
+			thumbnail_url = md[0]
+		end
+
+		# 動画のURL
+		page_url = title_node.xpath(".//a")[0].attribute('href')
+		full_path = root_url + page_url.text
+
+		video_page_urls.push(full_path)
+
+		# オブジェクトを作成
+		new_video = TempVideo.new()
+		new_video.title = title
+		new_video.page_url = full_path
+		new_video.thumbnail_url = thumbnail_url
+		new_video.video_url = full_path
+
+		new_video.print
+
+		video_list.add_video(new_video)
 	end
 
-	Anemone.crawl(video_page_urls, :depth_limit => 0) do |anemone|
-
-		anemone.on_every_page do |page|
-
-			doc = Nokogiri::HTML.parse(page.body.toutf8)
-
-			mainVideo = doc.xpath("//*[@id='mainVideo']")
-			player = mainVideo.xpath(".//*[@class='player']")
-
-			title = mainVideo.xpath(".//h1")[0].content
-			video_url = player.xpath(".//iframe")[0].attribute('src')
-
-			# コレクションからオブジェクトを抽出
-			got_video = video_list.get_video_by_page_url(page.url.to_s)
-			# プロパティを設定
-			got_video.title = title
-			got_video.video_url = video_url.text
-		end
-	end
+	# Anemone.crawl(video_page_urls, :depth_limit => 0) do |anemone|
+	#
+	# 	anemone.on_every_page do |page|
+	#
+	# 		doc = Nokogiri::HTML.parse(page.body.toutf8)
+	#
+	# 		mainVideo = doc.xpath("//*[@id='mainVideo']")
+	# 		player = mainVideo.xpath(".//*[@class='player']")
+	#
+	# 		title = mainVideo.xpath(".//h1")[0].content
+	# 		video_url = player.xpath(".//iframe")[0].attribute('src')
+	#
+	# 		# コレクションからオブジェクトを抽出
+	# 		got_video = video_list.get_video_by_page_url(page.url.to_s)
+	# 		# プロパティを設定
+	# 		got_video.title = title
+	# 		got_video.video_url = video_url.text
+	# 	end
+	# end
 
 	video_list.write_to_db
 end
 
-# アゲサゲ
-def crawl_agesage
-
-	# Videoオブジェクトを格納する
-	video_list = TempVideoList.new()
-
-	root_url = "http://asg.to/new-movie"
-
-	video_page_urls = []
-
-	# 5ページ分の起点URLを作る
-	1.times do |num|
-		start_url = "#{root_url}?page=#{num+1}"
-
-		puts "url : #{start_url}"
-
-		doc = Nokogiri::HTML(open(start_url))
-
-		nodes = doc.xpath("//div")
-
-		nodes.each do |node|
-			div_class = node.attribute('class')
-			div_id = node.attribute('id')
-
-			next if not (div_class == nil && div_id == nil)
-
-			a_tag = node.xpath(".//a")[0]
-			img_tag = node.xpath(".//img")[0]
-
-			next if a_tag == nil || img_tag == nil
-
-			page_url = a_tag.attribute('href')
-			thumbnail_url = img_tag.attribute('src')
-
-			full_path = root_url + page_url.text
-
-			next if page_url == nil
-
-			video_page_urls.push(full_path)
-
-			# オブジェクトを作成
-			new_video = TempVideo.new()
-			new_video.page_url = full_path
-			new_video.thumbnail_url = thumbnail_url.text
-
-			video_list.add_video(new_video)
-		end
-	end
-
-	Anemone.crawl(video_page_urls, :depth_limit => 0) do |anemone|
-
-		anemone.on_every_page do |page|
-
-			doc = Nokogiri::HTML.parse(page.body.toutf8)
-
-			mainVideo = doc.xpath("//*[@id='centerarea']")
-			player = mainVideo.xpath(".//*[@class='player']")
-
-			title = mainVideo.xpath(".//h2")[0].content
-			# video_url = player.xpath(".//iframe")[0].attribute('src')
-
-			# コレクションからオブジェクトを抽出
-			got_video = video_list.get_video_by_page_url(page.url.to_s)
-			# プロパティを設定
-			got_video.title = title
-			# got_video.video_url = video_url.text
-
-			got_video.print
-		end
-	end
-
-	# video_list.write_to_db
-
-end
-
-# 再生時間のテキストを解析し分に直して返します。
-# 引数：再生時間を表す文字列（例：00:02:55）
-def parse_play_time_text(play_time_text)
-	# 正規表現
-	re = "(\\d\\d):(\\d\\d):(\\d\\d)"
-
-	md = /#{re}/.match(play_time_text)
-
-	return 0 if md.nil?
-
-	hour = md[1].to_i
-	minutes = md[2].to_i
-	seconds = md[3].to_i
-
-	total_minutes = (hour * 60) + minutes
-end
+# # 再生時間のテキストを解析し分に直して返します。
+# # 引数：再生時間を表す文字列（例：00:02:55）
+# def parse_play_time_text(play_time_text)
+# 	# 正規表現
+# 	re = "(\\d\\d):(\\d\\d):(\\d\\d)"
+#
+# 	md = /#{re}/.match(play_time_text)
+#
+# 	return 0 if md.nil?
+#
+# 	hour = md[1].to_i
+# 	minutes = md[2].to_i
+# 	seconds = md[3].to_i
+#
+# 	total_minutes = (hour * 60) + minutes
+# end

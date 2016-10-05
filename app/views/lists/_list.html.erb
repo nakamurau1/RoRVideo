@@ -1,14 +1,12 @@
-<% if !list.private? %>
-	<div class="list_item">
-		<%= link_to list.name, list, :class=>"list_title" %>
-		<% if signed_in? && (current_user.admin? || current_user?(list.user)) %>
-			<!-- 管理者権限をもつユーザの場合はDeleteを表示 -->
-		  | <%= link_to "削除", list, method: :delete,
-		                             data: { confirm: "このリストを削除してもよろしいですか？"} %>
-		<% end %>
-		<div class="list_comment">
-			<p><%= list.comment %></p>
-		</div>
-		<%= render 'lists/follow_list_form', list: list %>
+<div class="list_item">
+	<%= link_to list.name, list, :class=>"list_title" %>
+	<% if signed_in? && (current_user.admin? || current_user?(list.user)) %>
+		<!-- 管理者権限をもつユーザの場合はDeleteを表示 -->
+	  | <%= link_to "削除", list, method: :delete,
+	                             data: { confirm: "このリストを削除してもよろしいですか？"} %>
+	<% end %>
+	<div class="list_comment">
+		<p><%= list.comment %></p>
 	</div>
-<% end %>
+	<%= render 'lists/follow_list_form', list: list %>
+</div>

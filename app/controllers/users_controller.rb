@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :signed_in_user, 
+  before_action :signed_in_user,
                 only: [:edit, :update, :destroy]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
@@ -10,7 +10,12 @@ class UsersController < ApplicationController
 
 	def show
     @user = User.find_by(:uniq_user_name => params[:id])
-    @lists = @user.lists.paginate(page: params[:page])
+    lists = @user.lists
+    if !current_user?(@user)
+      # ログイン中のユーザー出ない場合はプライベートのビデオは表示しない
+      lists = lists.find_all{|lis| !lis.private}
+    end
+    @lists = lists.paginate(page: params[:page])
 	end
 
   def new

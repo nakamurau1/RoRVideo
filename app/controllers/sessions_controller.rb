@@ -5,7 +5,7 @@ class SessionsController < ApplicationController
 
 	def create
 		user = User.find_by(uniq_user_name: params[:session][:uniq_user_name].downcase)
-		if user && user.authenticate(params[:session][:password]) 
+		if user && user.authenticate(params[:session][:password])
 			# ユーザーをサインインさせ、ユーザーページにリダイレクトする。
 			sign_in user
 			redirect_back_or user

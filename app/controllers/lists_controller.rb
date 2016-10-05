@@ -4,11 +4,12 @@ class ListsController < ApplicationController
 
   # 公開マイリストの一覧を表示
   def index
-    @all_lists = List.where(private: false).paginate(page: params[:page])    
+    @all_lists = List.where(private: false).paginate(page: params[:page])
   end
 
   # リストの中身を観る
   def show
+
   	@list = List.find_by(:id => params[:id])
 
     if !current_user?(@list.user) && @list.private?
@@ -73,6 +74,7 @@ class ListsController < ApplicationController
 
   # 動画ページでリストに追加された時
   def toggle
+
     # テンプレートを使わないことを明示的に宣言
     render nothing: true
 

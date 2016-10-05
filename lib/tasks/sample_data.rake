@@ -24,13 +24,13 @@ end
 def make_users
   User.create!(uniq_user_name: "rovideo",
                name: "rovideo",
-               password: "iwannaboyfriend",
-               password_confirmation: "iwannaboyfriend")
+               password: "passwordissimple",
+               password_confirmation: "passwordissimple")
 
   admin = User.create!(uniq_user_name: "admin_webmaster",
                        name: "admin",
-                       password: "iwannaboyfriend",
-                       password_confirmation: "iwannaboyfriend",
+                       password: "passwordissimple",
+                       password_confirmation: "passwordissimple",
                        admin: true)
 
 end
@@ -50,5 +50,3 @@ end
 #   other_user.lists.create!(name: "清純派", comment: "清純派の動画を集めました！",private: false)
 
 # end
-
-
